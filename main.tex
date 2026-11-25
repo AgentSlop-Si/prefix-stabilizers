@@ -1,0 +1,583 @@
+\documentclass[11pt,reqno]{amsart}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[margin=1.05in]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+\numberwithin{equation}{section}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Stab}{\operatorname{Stab}}
+\newcommand{\Orb}{\operatorname{Orb}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Mesc}{M_{\mathrm{escape}}}
+
+\title[Prefix Stabilizer Maxima in Finite Groups]{Prefix Stabilizer Maxima, Recursive Coset Orderings,\\and Escape Deficits in Finite Groups}
+
+\author{Daniyar Kuttymbek}
+\address{Astana, Kazakhstan}
+\email{daniyar.kuttymbek@gmail.com}
+
+\author{Adilkhan Kuttymbek}
+\address{Astana, Kazakhstan}
+\email{adilkhan.kuttymbek@gmail.com}
+
+\author{Amina Kolpenova}
+\address{Astana, Kazakhstan}
+\email{aminakolpenova@gmail.com}
+
+\date{\today}
+\subjclass[2020]{Primary 05E16, 20D60; Secondary 05A05, 11B30, 20D15}
+\keywords{Finite groups, prefix stabilizers, recursive coset orderings, permutation connectivity, quasihamiltonian groups, Cauchy--Davenport theorem, Vosper's theorem}
+
+\begin{document}
+
+\begin{abstract}
+For an ordering $\mathbf{x}=(x_1,\ldots,x_m)$ of the elements of a finite group $G$ acting on itself by left multiplication, consider the prefix-stabilizer objective
+\[
+Z_G(\mathbf{x}) = \sum_{j=1}^{m}\bigl(|\Stab_G(\{x_1,\ldots,x_j\})|-1\bigr),
+\]
+which equivalently sums Stanley's permutation connectivity statistic across the entire left regular representation of $G$. We determine the maximum $M(G) = \max_{\mathbf{x}} Z_G(\mathbf{x})$, classify all maximizing orderings, prove unique recovery of the top maximal subgroup from all proper-prefix stabilizers, and establish an exact labeled enumeration recurrence for two classes of finite groups: (i) finite quasihamiltonian groups (every pair of subgroups permutes), and (ii) all finite $p$-groups. In both classes, $M(G)=|G|\sum_{p\mid |G|} v_p(|G|)(1-1/p)$ and every maximizer is a recursive right-coset ordering with independent local choices inside cosets.
+
+Beyond these classes, we completely classify all finite groups of order $pq$ ($p<q$ primes). Every group of order $pq$ attains the same numerical maximum $pq-1+(p-1)(q-1)$, yet structural rigidity splits sharply by parity: for nonabelian $\F_q \rtimes C_p$ with odd $p$, the Cauchy--Davenport theorem forces every maximizer to be hierarchical, whereas for dihedral groups $D_{2q}$ ($p=2$), nonhierarchical maximizers arise and are enumerated by an explicit run-transition recurrence (giving $144$ of $360$ maximizers in $S_3$, the smallest structural counterexample). Finally, requiring proper-prefix stabilizers in nonabelian $\F_q \rtimes C_p$ to generate all of $G$ incurs the exact escape deficit $(p-1)(p-2)$, and for odd $p$ Vosper's theorem yields an exact closed-form count of all optimal escaping orderings.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction and main results}
+\label{sec:intro}
+
+Let $G$ be a finite group of order $m = |G|$, with identity $e$, acting on itself by left multiplication. An \emph{ordering} of $G$ is a sequence $\mathbf{x}=(x_1,\ldots,x_m)$ listing every element of $G$ exactly once. For $1\le j\le m$, write
+\begin{equation}
+\label{eq:defs}
+T_j = \{x_1,\ldots,x_j\},\qquad
+H_j = \Stab_G(T_j) = \{g\in G : gT_j = T_j\},
+\end{equation}
+and define the \emph{prefix-stabilizer score} and its maximum by
+\begin{equation}
+\label{eq:objective}
+Z_G(\mathbf{x}) = \sum_{j=1}^{m}\bigl(|H_j|-1\bigr),\qquad
+M(G) = \max_{\mathbf{x}} Z_G(\mathbf{x}),
+\end{equation}
+together with the arithmetic weight
+\begin{equation}
+\label{eq:weight}
+W(m) = \sum_{p\text{ prime}} v_p(m)\!\left(1-\frac{1}{p}\right),\qquad W(1)=0.
+\end{equation}
+The full prefix $T_m=G$ is included in~\eqref{eq:objective}, contributing $|H_m|-1 = m-1$. All elements of $G$ are treated as labeled; let $A(G)$ denote the number of labeled orderings $\mathbf{x}$ achieving $Z_G(\mathbf{x})=M(G)$, without quotienting by translations or group automorphisms.
+
+As shown by a direct double count in Section~\ref{sec:prior}, $Z_G(\mathbf{x})$ equals $\sum_{g\in G}|C(\sigma_g)|$, where $\sigma_g\in S_m$ is the permutation induced by left multiplication by $g$ in the coordinate order $\mathbf{x}$ and $C(\sigma)=\{1\le j<m : \sigma(\{1,\ldots,j\})=\{1,\ldots,j\}\}$ is Stanley's connectivity set~\cite{Sta05}. Optimizing $Z_G(\mathbf{x})$ therefore asks for a simultaneous coordinate ordering of $G$ that maximizes the total reducibility of its entire left regular representation.
+
+Under the left regular action, the orbits of a subgroup $K\le G$ are the right cosets $Kx$. Identifying a right coset $Kx$ with $K$ via $hx\mapsto h$ depends on the choice of representative $x$ only by right translation inside $K$, which preserves every left stabilizer as a subgroup (Lemma~\ref{lem:reg}). Hence the local objective on $Kx$ is independent of the chosen representative.
+
+\begin{definition}[Recursive coset ordering]
+\label{def:recursive}
+For the trivial group $|G|=1$, the unique ordering is a \emph{recursive coset ordering}. For $|G|>1$, an ordering $\mathbf{x}$ of $G$ is a \emph{recursive coset ordering} if there exists a maximal proper subgroup $K<G$ such that:
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item the distinct right cosets of $K$ appear as consecutive blocks of length $|K|$ in $\mathbf{x}$; and
+\item under the coordinate identification $hx\mapsto h$, the ordering induced inside each right coset is a recursive coset ordering of $K$.
+\end{enumerate}
+The choices of recursive orderings inside distinct cosets are completely independent.
+\end{definition}
+
+Following~\cite{BS20}, we call a finite group \emph{quasihamiltonian} if every pair of subgroups $U,V\le G$ permutes setwise, i.e., $UV=VU$. (In particular, every finite abelian group is quasihamiltonian, as is the quaternion group $Q_8$; the weaker notion of ``finitely quasihamiltonian'' is not used here.) We treat all finite $p$-groups separately without assuming pairwise subgroup permutability.
+
+\begin{theorem}[Quasihamiltonian groups and finite $p$-groups]
+\label{thm:main}
+Suppose that a finite group $G$ of order $m$ satisfies at least one of the following hypotheses:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item Every pair of subgroups of $G$ permutes ($UV=VU$ for all $U,V\le G$).
+\item $m=p^a$ for a prime $p$ and an integer $a\ge 0$.
+\end{enumerate}
+Then:
+\begin{enumerate}[label=(\alph*),leftmargin=2em]
+\item \emph{(Value)} $M(G)=mW(m)$.
+\item \emph{(Characterization)} An ordering maximizes $Z_G$ if and only if it is a recursive coset ordering. Equivalently, its top-level blocks are the right cosets of a maximal subgroup $K<G$, and every induced block ordering maximizes $Z_K$.
+\item \emph{(Unique top subgroup)} If $m>1$, the top maximal subgroup $K$ in~\textup{(b)} is uniquely determined by the ordering and satisfies
+\begin{equation}
+\label{eq:unique-top}
+K = \langle H_1,\ldots,H_{m-1}\rangle.
+\end{equation}
+\item \emph{(Labeled count)} $A(1)=1$, and for $m>1$,
+\begin{equation}
+\label{eq:count-rec}
+A(G) = \sum_{K\text{ maximal in }G} [G:K]!\, A(K)^{[G:K]}.
+\end{equation}
+\end{enumerate}
+\end{theorem}
+
+For finite $p$-groups, optimality is additionally characterized by pointwise saturation of the elementary divisibility bound $|H_j|\le \gcd(j,|G|)$ at every prefix.
+
+\begin{theorem}[Pointwise saturation for $p$-groups]
+\label{thm:pgroup}
+Let $|G|=p^a$ with $p$ prime and $a\ge 0$. An ordering $\mathbf{x}$ of $G$ maximizes $Z_G$ if and only if
+\begin{equation}
+\label{eq:saturation}
+|H_j| = \gcd(j,p^a) \qquad \text{for all } 1\le j\le p^a.
+\end{equation}
+In particular, $M(G)=a(p-1)p^{a-1}$ for $a\ge 1$, $M(1)=0$, and for $a\ge 1$,
+\begin{equation}
+\label{eq:pgroup-count}
+A(G) = p! \sum_{K\text{ maximal in }G} A(K)^p.
+\end{equation}
+\end{theorem}
+
+The uniqueness in~\eqref{eq:unique-top} applies to a fixed maximizing ordering; different maximizers may have different top subgroups, and the proper-prefix stabilizers $H_1,\ldots,H_{m-1}$ of a single maximizer need not form a chain (Section~\ref{sec:examples}).
+
+Both structural rigidity and the recurrence~\eqref{eq:count-rec} fail outside Theorem~\ref{thm:main}, beginning at the smallest possible nonabelian order $m=6$. Our next two theorems completely resolve all finite groups of order $pq$ ($p<q$ primes), revealing a sharp arithmetic dichotomy between $p=2$ and odd $p$.
+
+\begin{theorem}[Complete classification for order $pq$]
+\label{thm:pq}
+Let $p<q$ be primes and let $G$ be any group of order $pq$. Then
+\begin{equation}
+\label{eq:pq-max}
+M(G) = pq - 1 + (p-1)(q-1) = pq\,W(pq).
+\end{equation}
+Moreover:
+\begin{enumerate}[label=(\alph*),leftmargin=2em]
+\item If $G\cong C_{pq}$ is cyclic, then every maximizer is a recursive coset ordering and $A(C_{pq}) = p!(q!)^p + q!(p!)^q$.
+\item If $G\cong \F_q \rtimes C_p$ is nonabelian with $p$ odd, then every maximizer is a recursive coset ordering (with top subgroup either the unique Sylow $q$-subgroup $Q$ or one of the $q$ complements of order $p$), and
+\begin{equation}
+\label{eq:pq-odd-count}
+A(G) = p!(q!)^p + q\cdot q!(p!)^q.
+\end{equation}
+\item If $G\cong D_{2q} = \F_q \rtimes C_2$ is dihedral ($p=2$), then the maximizers decompose into $2(q!)^2$ hierarchical orderings on the index-$2$ cyclic subgroup $Q$, together with $2^q \sum_{|A|=q-1} f(A)$ orderings in the order-$2$ branch, where $f$ is defined on nonempty proper subsets of $\F_q$ by $f(\{a\})=q$ for singletons and
+\begin{equation}
+\label{eq:dihedral-dp}
+f(B) = \sum_{\substack{A\subset B\\ |A|=|B|-1}} f(A)\Bigl(1 + \#\bigl\{t\in\F_q^\times : B = A\cup(A+t)\bigr\}\Bigr).
+\end{equation}
+Exactly $2^q\sum_{|A|=q-1} f(A) - q\cdot q!\cdot 2^q$ of these maximizers are nonhierarchical. In particular, $S_3\cong D_6$ has $A(S_3)=360$ maximizers, of which $216$ are hierarchical and $144$ are nonhierarchical.
+\end{enumerate}
+\end{theorem}
+
+For nonabelian $G=\F_q\rtimes C_p$ with odd $p$, Theorem~\ref{thm:pq}(b) shows that no maximizer can have proper-prefix stabilizers generating all of $G$. Imposing that ``full-escape'' constraint incurs an exact quadratic penalty in $p$, whose extremal orderings are rigidly classified by Vosper's theorem~\cite{Vos56}.
+
+\begin{theorem}[Sharp full-escape deficit in nonabelian groups of order $pq$]
+\label{thm:escape}
+Let $G=\F_q \rtimes C_p$ be nonabelian with primes $p<q$, and define
+\[
+\Mesc(G) = \max\bigl\{Z_G(\mathbf{x}) : \langle H_1,\ldots,H_{pq-1}\rangle = G\bigr\}.
+\]
+Then
+\begin{equation}
+\label{eq:escape-val}
+\Mesc(G) = pq - 1 + (p-1)(q-p+1),\qquad M(G) - \Mesc(G) = (p-1)(p-2).
+\end{equation}
+For $p=2$, the optimal escaping orderings are precisely the nonhierarchical maximizers in Theorem~\ref{thm:pq}(c). For odd $p$, the exact number of labeled orderings achieving $\Mesc(G)$ is
+\begin{equation}
+\label{eq:escape-count}
+A_{\mathrm{escape}}(G) = 2 q^2 (q-1)(q-p)!\,(p!)^{q-p+1}\bigl(p(p-1)\bigr)!.
+\end{equation}
+\end{theorem}
+
+The paper is organized as follows. Section~\ref{sec:prelim} records elementary group-theoretic facts needed for self-contained proofs. Section~\ref{sec:coset} proves the exact local deficit accounting and block-forcing lemmas. Sections~\ref{sec:quasi} and~\ref{sec:pgroup} prove Theorems~\ref{thm:main} and~\ref{thm:pgroup}, and Section~\ref{sec:count} establishes unique top-subgroup recovery and the enumeration recurrence. Section~\ref{sec:examples} illustrates small counts and independent branching inside cosets. Section~\ref{sec:boundary} gives a direct analysis of $S_3$ and the solvable-group lower bound $M(G)\ge |G|W(|G|)$. Sections~\ref{sec:pq} and~\ref{sec:escape} prove Theorems~\ref{thm:pq} and~\ref{thm:escape} using the Cauchy--Davenport and Vosper theorems. Section~\ref{sec:prior} situates our results against the combinatorics and group-theory literature---including a complete comparison with Erd\H{o}s--Faigle--Kern~\cite{EFK92} and Stanley~\cite{Sta05}---and lists open problems.
+
+\section{Preliminary group facts}
+\label{sec:prelim}
+
+\begin{lemma}[Regular action and translations]
+\label{lem:reg}
+If a nonempty subset $S\subseteq G$ has left stabilizer $H=\Stab_G(S)$, then $|H|$ divides both $|S|$ and $|G|$. Moreover,
+\[
+\Stab_G(S) = \Stab_G(G\setminus S)
+\qquad\text{and}\qquad
+\Stab_G(Sy) = \Stab_G(S) \quad\text{for all } y\in G.
+\]
+\end{lemma}
+
+\begin{proof}
+Left multiplication by $H$ is free: $hs=s$ implies $h=e$. Thus $S$ is partitioned into $H$-orbits of size $|H|$, so $|H|\mid |S|$, while Lagrange's theorem gives $|H|\mid |G|$. Left multiplication by $g\in G$ is a bijection on $G$, so $gS=S$ if and only if $g(G\setminus S)=G\setminus S$. Finally, $g(Sy)=Sy$ is equivalent to $gS=S$.
+\end{proof}
+
+In particular, $|H_j|\le \gcd(j,m)$ for every $1\le j\le m$. At mixed-prime orders, these pointwise upper bounds are generally not simultaneously attainable.
+
+\begin{lemma}[Maximal subgroups of $p$-groups]
+\label{lem:pmax}
+Every maximal proper subgroup of a nontrivial finite $p$-group $P$ is normal of index $p$.
+\end{lemma}
+
+\begin{proof}
+We first show by induction on $|P|$ that every proper subgroup $L<P$ satisfies $L < N_P(L)$. By the class equation, the center $Z(P)$ is nontrivial. If $Z(P)\not\subseteq L$, any $z\in Z(P)\setminus L$ lies in $N_P(L)\setminus L$. Otherwise $Z(P)\subseteq L$, and the induction hypothesis applied to $L/Z(P) < P/Z(P)$ produces an element of $N_{P/Z(P)}(L/Z(P))\setminus (L/Z(P))$, whose lift to $P$ lies in $N_P(L)\setminus L$.
+
+If $L<P$ is maximal, then $N_P(L)=P$, so $L\lhd P$. The nontrivial $p$-group $P/L$ has no proper nontrivial subgroup; choosing any nonidentity element generates a cyclic $p$-subgroup that must equal $P/L$, which forces $|P/L|=p$.
+\end{proof}
+
+\begin{lemma}[Maximal subgroups of quasihamiltonian groups]
+\label{lem:qmax}
+If every pair of subgroups of a finite group $G$ permutes, then every maximal proper subgroup of $G$ is normal of prime index.
+\end{lemma}
+
+\begin{proof}
+Whenever subgroups $U,V\le G$ satisfy $UV=VU$, their product $UV$ is a subgroup of order $|U||V|/|U\cap V|$. Let $P$ be a Sylow $p$-subgroup of $G$. For any $g\in G$, the product $P(gPg^{-1})$ is a $p$-subgroup containing $P$, so Sylow maximality forces $gPg^{-1}=P$. Hence every Sylow subgroup is normal.
+
+Normal subgroups of coprime orders commute elementwise, as their commutators lie in their trivial intersection. Thus $G=\prod_p P_p$ is the direct product of its Sylow subgroups. For any subgroup $K\le G$ and $x\in K$, the Chinese remainder theorem expresses each Sylow component of $x$ as a power of $x$, so $K=\prod_p (K\cap P_p)$. If $K<G$ is maximal, all but one Sylow component must equal $P_p$ (otherwise enlarging one deficient component yields a proper intermediate subgroup), and in the unique deficient component $K\cap P_p$ is maximal in $P_p$. By Lemma~\ref{lem:pmax}, $K\cap P_p\lhd P_p$ has index $p$, whence $K\lhd G$ has index $p$.
+\end{proof}
+
+Both hypotheses of Theorem~\ref{thm:main} are inherited by subgroups, allowing induction on $|G|$.
+
+\section{Coset restriction and block-forcing lemmas}
+\label{sec:coset}
+
+The three lemmas in this section isolate the local accounting and equality structure without assuming either global hypothesis of Theorem~\ref{thm:main}.
+
+\begin{lemma}[Exact local deficit accounting]
+\label{lem:local}
+Let $K<G$ be a proper subgroup of order $k=|K|$ and index $q=[G:K]$ that contains every proper-prefix stabilizer $H_1,\ldots,H_{m-1}$ of an ordering $\mathbf{x}$. Restrict $\mathbf{x}$ to each right coset $C$ of $K$, and after identifying $C$ with $K$ let $Z_C$ denote its local score. For each $1\le j\le m$, let $C_j = Kx_j$, $U_j = T_j\cap C_j$, and $L_j = \{h\in K : hU_j = U_j\}$. Then $H_j\le L_j$ for all $j<m$, and
+\begin{equation}
+\label{eq:local-id}
+Z_G(\mathbf{x})
+= \sum_{C} Z_C + m - k - \sum_{j=1}^{m-1} \bigl(|L_j|-|H_j|\bigr)
+\le q\,M(K) + m - k.
+\end{equation}
+Equality in the final inequality holds if and only if every local ordering is optimal ($Z_C=M(K)$) and $H_j=L_j$ for all $1\le j<m$.
+\end{lemma}
+
+\begin{proof}
+For $j<m$, any $h\in H_j$ lies in $K$, so $h$ preserves both $C_j=Kx_j$ and $T_j$, hence preserves $U_j=T_j\cap C_j$. Thus $H_j\le L_j$. As $j$ runs through the indices with $x_j\in C$, the intersections $U_j$ traverse every nonempty prefix of the ordering induced on $C$ exactly once; therefore $\sum_{j=1}^{m}(|L_j|-1)=\sum_C Z_C$. At $j=m$ we have $L_m=K$ and $H_m=G$, contributing a difference $(m-1)-(k-1)=m-k$. Subtracting the nonfinal inclusion deficits $|L_j|-|H_j|\ge 0$ gives the equality in~\eqref{eq:local-id}, and the bound $Z_C\le M(K)$ gives the inequality. Since every local loss $M(K)-Z_C$ and every deficit $|L_j|-|H_j|$ is nonnegative, total equality forces all of them to vanish; finite inclusion $H_j\le L_j$ with $|H_j|=|L_j|$ gives $H_j=L_j$.
+\end{proof}
+
+\begin{lemma}[Exact score of consecutive coset blocks]
+\label{lem:block-score}
+Suppose $K\lhd G$ has prime index $q$. For any ordering $\mathbf{x}$ consisting of consecutive right cosets of $K$, every proper-prefix stabilizer lies in $K$: inside a partial block it equals the active local stabilizer $L_j$, and at each proper block boundary it equals $K$. Consequently,
+\begin{equation}
+\label{eq:block-score}
+Z_G(\mathbf{x}) = \sum_C Z_C + m - k.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Since $K\lhd G$, left multiplication by $G$ permutes the right cosets of $K$. A prefix stopping strictly inside a block has exactly one partially occupied coset $C_j$, with every other coset empty or full; any $g\in H_j$ must map this unique partial coset to itself, forcing $g\in K$. Conversely, every $h\in K$ stabilizes every empty or full coset, so $h\in H_j$ iff $h\in L_j$.
+
+At a proper block boundary ($j=tk$, $1\le t<q$), $T_j$ is a union of $t$ right cosets and thus corresponds to a nonempty proper subset of the prime-order quotient $G/K$. Every nonidentity element of $G/K$ acts transitively by translation, so no nonidentity coset stabilizes a nonempty proper subset of $G/K$. Hence $H_j=K=L_j$ at every proper block boundary. Lemma~\ref{lem:local} then yields~\eqref{eq:block-score}.
+\end{proof}
+
+\begin{lemma}[Equality forces consecutive whole blocks]
+\label{lem:force-blocks}
+In the setting of Lemma~\ref{lem:local}, if equality holds in~\eqref{eq:local-id}, then $\mathbf{x}$ consists of consecutive right cosets of $K$ with optimal induced orderings.
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:local}, every local ordering is optimal and $H_j=L_j$ for all $j<m$. Consider the first index $j$ at which some right coset of $K$ becomes completely filled. Because $q\ge 2$, we have $j<m$. At this insertion, the active local stabilizer is $L_j=K$, so $H_j=K$. Since $T_j$ is $K$-invariant, every right coset of $K$ is either completely full or completely empty in $T_j$. By minimality of $j$, no other coset was already full, and a single insertion fills only one coset; hence all other cosets are empty, and the first $k$ elements form one complete coset.
+
+Inductively, suppose the first $r$ completed cosets appear as consecutive blocks with all remaining cosets untouched ($1\le r<q-1$). At the next coset completion time $j'<m$, the same equality gives $H_{j'}=L_{j'}=K$, so among the remaining $q-r$ cosets only the newly completed one is full and all others are empty. Thus it forms the $(r+1)$-st consecutive block. The final coset automatically occupies the remaining $k$ positions.
+\end{proof}
+
+Note that Lemma~\ref{lem:force-blocks} does not assume that stabilizers of earlier prefixes persist for later prefixes.
+
+\section{Proof for quasihamiltonian groups}
+\label{sec:quasi}
+
+\begin{lemma}[Accumulated coset containment]
+\label{lem:accum}
+Suppose every pair of subgroups of $G$ permutes. Set $B_j = \langle H_1,\ldots,H_j\rangle$ for $1\le j\le m$. Then $B_j x_1 \subseteq T_j$ for every $j$. In particular, $B_{m-1} < G$ whenever $m>1$.
+\end{lemma}
+
+\begin{proof}
+For $j=1$, $H_1=\{e\}$ and $B_1 x_1 = \{x_1\} = T_1$. Assume $B_{j-1}x_1 \subseteq T_{j-1}$ for some $j\ge 2$. Pairwise subgroup permutability implies that $H_j B_{j-1}$ is a subgroup containing both $H_j$ and $B_{j-1}$, so $B_j = H_j B_{j-1}$. Since $T_{j-1}\subseteq T_j$ and $H_j T_j = T_j$,
+\[
+B_j x_1 = H_j B_{j-1} x_1 \subseteq H_j T_j = T_j.
+\]
+By induction, $B_{m-1}x_1 \subseteq T_{m-1}$. Since $|T_{m-1}|=m-1<m=|Gx_1|$, we must have $B_{m-1}\neq G$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}(a)--(b) under hypothesis~(1)]
+We induct on $m=|G|$, the case $m=1$ being trivial. Assume $m>1$ and let $\mathbf{x}$ be any ordering of $G$. By Lemma~\ref{lem:accum}, $B_{m-1}<G$, so we may choose a maximal proper subgroup $K<G$ containing $B_{m-1}$. By Lemma~\ref{lem:qmax}, $K\lhd G$ has prime index $q=m/k$, where $k=|K|$. Since $K$ is also quasihamiltonian, Lemma~\ref{lem:local} and the induction hypothesis on $K$ yield
+\begin{equation}
+\label{eq:quasi-bound}
+Z_G(\mathbf{x}) \le q\,M(K) + m - k = qkW(k) + m - k = m\!\left(W(k) + 1 - \frac{1}{q}\right) = mW(m),
+\end{equation}
+using the prime-valuation definition~\eqref{eq:weight}. Conversely, picking any maximal subgroup $K<G$, arranging its right cosets consecutively, and using inductively optimal local orderings achieves $Z_G(\mathbf{x})=mW(m)$ by Lemma~\ref{lem:block-score}. Hence $M(G)=mW(m)$.
+
+If $\mathbf{x}$ is optimal, equality holds throughout~\eqref{eq:quasi-bound} for the chosen $K\supseteq B_{m-1}$. Lemma~\ref{lem:force-blocks} forces $\mathbf{x}$ to consist of consecutive right $K$-cosets with optimal induced orderings; applying the induction hypothesis inside each coset shows that $\mathbf{x}$ is a recursive coset ordering. Conversely, every recursive coset ordering attains $mW(m)$ by induction and Lemma~\ref{lem:block-score}.
+\end{proof}
+
+\begin{remark}
+Rewriting~\eqref{eq:local-id} for the chosen $K\supseteq B_{m-1}$ gives the exact nonnegative deficit decomposition
+\[
+mW(m) - Z_G(\mathbf{x}) = \sum_C \bigl(kW(k) - Z_C\bigr) + \sum_{j=1}^{m-1} \bigl(|L_j|-|H_j|\bigr).
+\]
+\end{remark}
+
+\section{Proof for all finite $p$-groups}
+\label{sec:pgroup}
+
+We do not invoke pairwise subgroup permutability or Lemma~\ref{lem:accum} in this section.
+
+\begin{proof}[Proof of Theorem~\ref{thm:pgroup} and Theorem~\ref{thm:main}(a)--(b) under hypothesis~(2)]
+For $a=0$ everything is trivial; assume $m=p^a$ with $a\ge 1$. By Lemma~\ref{lem:reg}, $|H_j|\le \gcd(j,p^a)$ for every $1\le j\le p^a$. For each $0\le t<a$, exactly $(p-1)p^{a-t-1}$ integers $j\in\{1,\ldots,p^a\}$ have $v_p(j)=t$, while $j=p^a$ has $\gcd(p^a,p^a)=p^a$. Thus
+\[
+Z_G(\mathbf{x}) \le \sum_{j=1}^{p^a}\bigl(\gcd(j,p^a)-1\bigr)
+= \sum_{t=0}^{a-1} p^t (p-1)p^{a-t-1} + p^a - p^a
+= a(p-1)p^{a-1} = mW(m).
+\]
+To see attainment, choose any maximal subgroup $K<G$ (which is normal of index $p$ by Lemma~\ref{lem:pmax}) and concatenate inductively optimal orderings on its $p$ right cosets. By Lemma~\ref{lem:block-score}, this achieves score
+\[
+p\cdot (a-1)|K|\!\left(1-\frac{1}{p}\right) + p^a - p^{a-1} = a(p-1)p^{a-1}.
+\]
+Hence $M(G)=a(p-1)p^{a-1}=mW(m)$. Because every pointwise deficit $\gcd(j,p^a)-|H_j|$ is nonnegative, $Z_G(\mathbf{x})=M(G)$ holds if and only if $|H_j|=\gcd(j,p^a)$ for all $1\le j\le p^a$, proving Theorem~\ref{thm:pgroup} apart from~\eqref{eq:pgroup-count}.
+
+Now suppose $\mathbf{x}$ is optimal and set $k=p^{a-1}$. By saturation at $j=k$, $K:=H_k$ has order $k$ and is therefore a normal maximal subgroup by Lemma~\ref{lem:pmax}. Since $|T_k|=k$ and $K T_k = T_k$, we have $T_k = Kx_1$. For each proper block boundary $j=tk$ ($1\le t<p$), saturation likewise gives a normal maximal subgroup $J:=H_{tk}$ of order $k$. Because $T_{tk}$ contains $Kx_1$ and is $J$-invariant, it contains $JKx_1$. If $J\neq K$, then $JK$ is a subgroup strictly containing the maximal subgroup $K$, so $JK=G$ and $T_{tk}=G$, contradicting $tk<p^a$. Therefore
+\[
+H_{tk} = K \qquad (1\le t<p).
+\]
+Setting $T_0=\varnothing$ and $T_m=G$, each successive difference $T_{tk}\setminus T_{(t-1)k}$ ($1\le t\le p$) is a $K$-invariant set of size $k$, hence a single right coset of $K$. Thus $\mathbf{x}$ consists of consecutive right $K$-cosets. By Lemma~\ref{lem:block-score}, $Z_G(\mathbf{x}) = \sum_C Z_C + p^a - p^{a-1}$, while $Z_C\le M(K)$ and $Z_G(\mathbf{x})=pM(K)+p^a-p^{a-1}$, forcing $Z_C=M(K)$ on every coset. Induction completes the proof of Theorem~\ref{thm:main}(b) for $p$-groups.
+\end{proof}
+
+\section{Unique top-subgroup recovery and enumeration}
+\label{sec:count}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}(c)--(d) and~\eqref{eq:pgroup-count}]
+Let $m>1$ and let $\mathbf{x}$ be a maximizing ordering under either hypothesis of Theorem~\ref{thm:main}, with top maximal subgroup $K<G$ of order $k$ and prime index $q$. By Lemma~\ref{lem:block-score}, $H_j\le K$ for every $1\le j<m$, and at the first completed block boundary $j=k<m$ we have $H_k=K$. Therefore $\langle H_1,\ldots,H_{m-1}\rangle = K$. (When $m=p$ is prime, $K=\{e\}$ and every proper prefix stabilizer is trivial, so the formula still recovers $K=\{e\}$.) In particular, $K$ is uniquely determined by $\mathbf{x}$, so the sets of maximizing orderings associated with distinct maximal subgroups are pairwise disjoint.
+
+For a fixed maximal subgroup $K$ of index $q$, the $q$ distinct right cosets can be ordered in $q!$ ways. Fixing a reference representative in each coset to identify it with $K$, there are $A(K)$ maximizing orderings in each coset independently, giving $q!\,A(K)^q$ labeled maximizing orderings with top subgroup $K$ (changing reference representatives merely relabels coordinates by right translation inside $K$, introducing no extra factor). Summing over all maximal subgroups $K<G$ proves~\eqref{eq:count-rec}, and specializing to $[G:K]=p$ proves~\eqref{eq:pgroup-count}.
+\end{proof}
+
+\section{Examples and independent coset branching}
+\label{sec:examples}
+
+For a cyclic group $C_m$, each prime divisor $q\mid m$ gives a unique maximal subgroup of index $q$, so~\eqref{eq:count-rec} specializes to
+\begin{equation}
+\label{eq:cyclic-rec}
+A(C_1)=1,\qquad A(C_m)=\sum_{\substack{q\mid m\\ q\text{ prime}}} q!\, A(C_{m/q})^q.
+\end{equation}
+Thus $A(C_p)=p!$ for prime $p$, and small composite values include:
+\begin{align*}
+A(C_4) &= 2!(2!)^2 = 8, &
+A(C_6) &= 2!(3!)^2 + 3!(2!)^3 = 120,\\
+A(C_8) &= 2!\,8^2 = 128, &
+A(C_{12}) &= 2!\,120^2 + 3!\,8^3 = 31{,}872.
+\end{align*}
+More generally, $A(C_{p^a})=(p!)^{(p^a-1)/(p-1)}$. Among noncyclic groups of small order, $C_2\times C_2$ has three maximal subgroups of order $2$, giving $A(C_2\times C_2)=3\cdot 2!(2!)^2=24$; the quaternion group $Q_8$ has three maximal subgroups isomorphic to $C_4$, giving $A(Q_8)=3\cdot 2!\,8^2=384$; and the dihedral group $D_8$ has one maximal $C_4$ and two maximal $C_2\times C_2$, giving
+\[
+A(D_8) = 2!\bigl(8^2 + 2\cdot 24^2\bigr) = 2{,}432.
+\]
+Hence $A(G)$ distinguishes isomorphism types even when $M(G)$ depends only on $|G|$ (all five groups of order $8$ have $M(G)=12$).
+
+\begin{example}[Non-nested prefix stabilizers in $C_{12}$]
+In additive $C_{12}=\Z/12\Z$, the ordering
+\[
+0, 6, 2, 8, 4, 10,\;\; 1, 5, 9, 3, 7, 11
+\]
+has prefix stabilizer orders $1,2,1,2,1,6,\; 1,1,3,1,1,12$ and score $20=12W(12)$. Its top subgroup is the even subgroup $2\Z/12\Z\cong C_6$; inside the even coset it branches via the index-$3$ subgroup $\{0,6\}$, whereas inside the odd coset it branches via the index-$2$ subgroup $\{0,4,8\}$. In particular, $H_2=\{0,6\}$ and $H_9=\{0,4,8\}$ are incomparable, confirming that maximizing orderings need not follow a single fixed subgroup chain.
+\end{example}
+
+\section{The smallest structural boundary and solvable lower bound}
+\label{sec:boundary}
+
+Before establishing the full order-$pq$ classification, we record an elementary direct proof for $S_3$ and the general solvable lower bound.
+
+\begin{proposition}[Smallest structural counterexample]
+\label{prop:S3}
+In $S_3$, $M(S_3)=7$ and $A(S_3)=360$. Exactly $216$ maximizers are recursive right-coset orderings, while $144$ are nonhierarchical.
+\end{proposition}
+
+\begin{proof}
+Let $a=(12)$ and $b=(23)$, composing right to left. The ordering $(e,a,b,ba,ab,aba)$ has stabilizers $\{e\},\langle a\rangle,\{e\},\langle b\rangle,\{e\},S_3$ (for $T_4=\langle b\rangle\langle a\rangle$, $|H_4|\mid \gcd(4,6)=2$ so $H_4=\langle b\rangle$), achieving score $1+1+5=7$. Note that $\langle H_2,H_4\rangle = S_3$.
+
+Conversely, for any ordering of $S_3$, $H_1=H_5=\{e\}$, $H_6=S_3$, and Lemma~\ref{lem:reg} yields $|H_2|-1\le 1$, $|H_3|-1\le 2$, $|H_4|-1\le 1$. If $|H_3|=3$, then $T_3$ is a coset of $A_3$, so all elements of $T_3$ have equal parity; no pair of equal-parity elements has a nontrivial left stabilizer (an exchanging translation must be an odd involution), forcing $H_2=\{e\}$, and by complementation $H_4=\{e\}$, giving score $7$. If $H_3=\{e\}$, the score is at most $1+1+5=7$. Thus $M(S_3)=7$.
+
+For the count, $|H_3|=3$ occurs iff $T_3$ is one of the two cosets of $A_3$, yielding $2(3!)^2=72$ hierarchical orderings with top $A_3$. Otherwise optimality forces $|H_2|=|H_4|=2$, which occurs iff both $T_2$ and $S_3\setminus T_4$ are unordered pairs of opposite parity. There are $3\cdot 3=9$ choices for $T_2$, $2\cdot 2=4$ choices for the disjoint opposite-parity final pair, and $(2!)^3=8$ internal orderings of the three pairs, giving $9\cdot 4\cdot 8=288$ orderings (each has mixed parity in $T_3$, so $H_3=\{e\}$). Thus $A(S_3)=72+288=360$. Among the $288$ orderings of the second type, being a right-coset ordering requires the three pairs to be the three right cosets of the order-$2$ subgroup $H_2$: $T_2$ fixes $H_2$ and one coset, leaving $2$ choices for the final coset and $8$ internal orders, hence $9\cdot 2\cdot 8=144$ hierarchical orderings. Thus $72+144=216$ maximizers are hierarchical and $144$ are not.
+\end{proof}
+
+Since every group of order $\le 5$ is abelian, $S_3$ is the smallest group for which the structural characterization and formal recurrence~\eqref{eq:count-rec} (which evaluates to $2!(3!)^2+3\cdot 3!(2!)^3=216$) fail.
+
+\begin{proposition}[Solvable-group lower bound]
+\label{prop:solvable}
+Every finite solvable group $G$ admits an ordering of score $|G|W(|G|)$; hence $M(G)\ge |G|W(|G|)$.
+\end{proposition}
+
+\begin{proof}
+We induct on $|G|$, the trivial group being immediate. A nontrivial finite solvable group $G$ has nontrivial abelianization $G/[G,G]$, which admits a prime-order quotient $C_q$, yielding a normal subgroup $K\lhd G$ of prime index $q$. Since $K$ is solvable, the induction hypothesis gives an ordering of $K$ with score $|K|W(|K|)$; concatenating copies on the $q$ right cosets of $K$ produces score $q|K|W(|K|)+|G|-|K|=|G|W(|G|)$ by Lemma~\ref{lem:block-score}.
+\end{proof}
+
+\section{Complete classification for all groups of order $pq$}
+\label{sec:pq}
+
+We now prove Theorem~\ref{thm:pq}. Let $p<q$ be primes and let $|G|=pq$. By Sylow's theorem, $G$ has a unique (hence normal) Sylow $q$-subgroup $Q\cong C_q$. If $G$ is cyclic ($C_{pq}$), Theorem~\ref{thm:main} already gives $M(C_{pq})=pq-1+(p-1)(q-1)$ and $A(C_{pq})=p!(q!)^p+q!(p!)^q$, establishing~(a).
+
+Assume now that $G$ is nonabelian, so $p\mid (q-1)$ and $G \cong \F_q \rtimes C_p$, written explicitly as pairs $(u,i)\in \F_q\times (\Z/p\Z)$ with group law
+\[
+(u,i)(v,j) = (u + \alpha^i v,\; i+j),
+\]
+where $\alpha\in\F_q^\times$ has exact multiplicative order $p$. Here $Q=\F_q\times\{0\}$. Every subgroup of order $p$ (a complement to $Q$) has a unique \emph{center} $c\in\F_q$ and is given by
+\[
+K_c = \bigl\{\bigl((1-\alpha^j)c,\, j\bigr) : 0\le j<p\bigr\} = \bigl\langle\bigl((1-\alpha)c,\, 1\bigr)\bigr\rangle.
+\]
+
+\begin{lemma}[Branch separation and layerwise containment]
+\label{lem:pq-branches}
+Let $S\subsetneq G$ be a nonempty proper subset of $G=\F_q\rtimes C_p$ with nontrivial left stabilizer $H=\Stab_G(S)$.
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item Either $H=Q$, in which case $S$ is a union of full layers $\F_q\times\{i\}$ (so $|S|$ is a proper multiple of $q$), or $H=K_c$ for a unique $c\in\F_q$, in which case $S$ has equal occupancy $|A|\in\{1,\ldots,q-1\}$ in every layer $\F_q\times\{i\}$ (so $|S|=p|A|$).
+\item No nonempty proper $Q$-invariant subset can contain, or be contained in, any nonempty proper $K_c$-invariant subset.
+\item A nonempty proper $K_c$-invariant subset $S$ is uniquely determined by its layer-$0$ coordinate set $A=\{u\in\F_q : (u,0)\in S\}$: its layer-$j$ coordinates are $\alpha^j A + (1-\alpha^j)c$.
+\item Given a $K_c$-invariant subset $(c,A)$ and a $K_d$-invariant subset $(d,B)$, we have $(c,A)\subseteq (d,B)$ if and only if
+\begin{equation}
+\label{eq:layer-contain}
+A + D(c,d) \subseteq B,\qquad D(c,d) := \bigl\{(\alpha^{-j}-1)(c-d) : 0\le j<p\bigr\}.
+\end{equation}
+Moreover, if $c\neq d$, then $|D(c,d)|=p$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Since $S$ is nonempty and proper, $H$ is a proper nontrivial subgroup of order $q$ or $p$, hence $H=Q$ or $H=K_c$. If $H=Q$, left multiplication by $Q$ translates layer $i$ onto itself, so each layer is either full or empty. If $H=K_c$, then $K_c$ acts transitively on the $p$ layers of $G/Q$; specifically, $\bigl((1-\alpha^j)c,j\bigr)(u,0)=(\alpha^j u+(1-\alpha^j)c,j)$, proving~(3) and equal occupancy $|A|\in\{1,\ldots,q-1\}$ across all $p$ layers. Since a nonempty proper $Q$-invariant set has at least one full layer and at least one empty layer, whereas every $K_c$-invariant proper set has $1\le |A|\le q-1$ elements in every layer, neither can be contained in the other, proving~(2). If $(c,A)$ were also $K_d$-invariant for $d\neq c$, then $\langle K_c,K_d\rangle = G$ by Lagrange's theorem, contradicting properness of $S$; this proves uniqueness of $c$ in~(1).
+
+For~(4), $(c,A)\subseteq (d,B)$ holds iff for every $0\le j<p$,
+\[
+\alpha^j A + (1-\alpha^j)c \subseteq \alpha^j B + (1-\alpha^j)d.
+\]
+Multiplying by $\alpha^{-j}$ and rearranging gives $A + (\alpha^{-j}-1)(c-d)\subseteq B$ for all $0\le j<p$, which is~\eqref{eq:layer-contain}. Since $\alpha$ has multiplicative order $p$, the elements $\alpha^{-j}-1$ ($0\le j<p$) are pairwise distinct in $\F_q$, so $|D(c,d)|=p$ whenever $c\neq d$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:pq}]
+Let $\mathbf{x}$ be any ordering of $G=\F_q\rtimes C_p$. By Lemma~\ref{lem:pq-branches}(2), the proper prefixes of $\mathbf{x}$ with nontrivial stabilizers cannot include both a $Q$-invariant prefix and a $K_c$-invariant prefix.
+\begin{itemize}[leftmargin=1.5em]
+\item In the \emph{$Q$-branch}, nontrivial proper stabilizers occur only at $j\in\{q,2q,\ldots,(p-1)q\}$, at most $p-1$ times, each contributing $|Q|-1=q-1$, for a proper-prefix total of at most $(p-1)(q-1)$.
+\item In the \emph{order-$p$ branch}, nontrivial proper stabilizers occur only at $j\in\{p,2p,\ldots,(q-1)p\}$, at most $q-1$ times, each contributing $|K_c|-1=p-1$, again for a proper-prefix total of at most $(q-1)(p-1)$.
+\end{itemize}
+Adding the full-prefix contribution $pq-1$ proves $M(G)\le pq-1+(p-1)(q-1)$. Consecutive right-coset orderings of $Q$ (or of any $K_c$) achieve equality, proving~\eqref{eq:pq-max}.
+
+Moreover, equality in the $Q$-branch requires $H_{tq}=Q$ for every $1\le t\le p-1$, which forces the $p$ layers of $G/Q$ to appear as consecutive blocks of size $q$ in any order and with any internal ordering, giving exactly $p!(q!)^p$ labeled maximizers.
+
+In the order-$p$ branch, equality requires $|H_{kp}|=p$ for \emph{every} $1\le k\le q-1$, yielding a strictly increasing chain of proper complement-stabilized prefixes
+\[
+(c_1,A_1) \subset (c_2,A_2) \subset \cdots \subset (c_{q-1},A_{q-1}),\qquad |A_k|=k.
+\]
+By Lemma~\ref{lem:pq-branches}(4), each consecutive transition satisfies $A_k + D(c_k,c_{k+1})\subseteq A_{k+1}$.
+
+\smallskip
+\noindent\emph{Case~(b): $p$ is odd.} Suppose $c_k\neq c_{k+1}$ for some $1\le k\le q-2$. Then $|D(c_k,c_{k+1})|=p$, and the Cauchy--Davenport theorem in $\F_q$~\cite{Nat96} yields
+\[
+|A_{k+1}| \ge |A_k + D(c_k,c_{k+1})| \ge \min\bigl(q,\; |A_k| + p - 1\bigr).
+\]
+Since $|A_{k+1}|=|A_k|+1<q$, this forces $p-1\le 1$, impossible for odd $p\ge 3$. Therefore $c_1=c_2=\cdots=c_{q-1}=c$ is constant. Consequently every consecutive difference $T_{kp}\setminus T_{(k-1)p}$ ($1\le k\le q$, with $T_0=\varnothing, T_{pq}=G$) is a single right coset of $K_c$. There are $q$ choices for $c$, $q!$ orders of the $q$ cosets, and $(p!)^q$ internal orderings, giving $q\cdot q!(p!)^q$ orderings---all hierarchical---and proving~\eqref{eq:pq-odd-count}.
+
+\smallskip
+\noindent\emph{Case~(c): $p=2$ ($G\cong D_{2q}$).} Here $\alpha=-1$, so $D(c,d)=\{0,-2(c-d)\}$. Write $t=-2(c-d)\in\F_q$. Keeping the same center ($t=0$) allows adding any single element to $A_k$ to form $A_{k+1}$. Changing center ($t\neq 0$) satisfies $A_k + \{0,t\}\subseteq A_{k+1}$ with $|A_{k+1}|=|A_k|+1$ if and only if $A_{k+1}=A_k\cup (A_k+t)$ has size $|A_k|+1$ (equivalently, $A_k$ is a single contiguous run in the cyclic order on $\F_q$ with step $t$). Because $\operatorname{char}\F_q=q$ is odd, each eligible nonzero shift $t$ determines a unique new center $d = c + t/2$ from any given old center $c$.
+
+Therefore, if $f(B)$ counts the number of valid maximizing chains $(c_1,A_1)\subset\cdots\subset (c_k,A_k)$ ending at layer-$0$ set $A_k=B$ (summed over all ending centers $c_k\in\F_q$), we have $f(\{a\})=q$ for each singleton $\{a\}\subset\F_q$ (any center $c_1\in\F_q$ is allowed), and every step from $A$ to $B$ with $|B|=|A|+1$ contributes $1$ center-preserving transition plus one center-changing transition for each $t\in\F_q^\times$ satisfying $B=A\cup(A+t)$. This proves~\eqref{eq:dihedral-dp}. No center is specified at $T_{2q}=G$, and each of the $q$ consecutive newly added pairs may be ordered in $2!$ ways, giving $2^q\sum_{|A|=q-1}f(A)$ labeled orderings in the order-$2$ branch. Exactly $q\cdot q!\cdot 2^q$ of these have constant center (hence are hierarchical on a complement $K_c$), while the rest are nonhierarchical. For $q=3$ ($S_3$), this recovers $2(3!)^2=72$, $2^3\sum_{|A|=2}f(A)=288$, $A(S_3)=360$, and $288-144=144$ nonhierarchical maximizers.
+\end{proof}
+
+Table~\ref{tab:pq-counts} records exact values verified by independent full subset dynamic programming in the accompanying validation script.
+
+\begin{table}[ht]
+\centering
+\caption{Exact maxima and labeled optimizer counts for small nonabelian groups of order $pq$.}
+\label{tab:pq-counts}
+\begin{tabular}{rrrrrr}
+\toprule
+Group & Order & $M(G)$ & $A(G)$ & Hierarchical & Nonhierarchical \\
+\midrule
+$D_6 \cong S_3$ & $6$ & $7$ & $360$ & $216$ & $144$ \\
+$D_{10}$ & $10$ & $13$ & $156{,}800$ & $48{,}000$ & $108{,}800$ \\
+$D_{14}$ & $14$ & $19$ & $100{,}778{,}496$ & $55{,}319{,}040$ & $45{,}459{,}456$ \\
+$\F_7\rtimes C_3$ & $21$ & $32$ & $778{,}020{,}526{,}080$ & $778{,}020{,}526{,}080$ & $0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Sharp full-escape deficit via Vosper's theorem}
+\label{sec:escape}
+
+We now prove Theorem~\ref{thm:escape}, determining the exact cost of forcing $\langle H_1,\ldots,H_{pq-1}\rangle = G$ in nonabelian $G=\F_q\rtimes C_p$.
+
+\begin{proof}[Proof of Theorem~\ref{thm:escape}]
+Let $\mathbf{x}$ be an ordering of $G=\F_q\rtimes C_p$ whose proper-prefix stabilizers generate all of $G$. By Lemma~\ref{lem:pq-branches}(2), the nontrivial proper stabilizers cannot mix $Q$ with complements $K_c$; since $Q$ alone is proper, the ordering must lie in the order-$p$ branch and use at least two distinct complements $K_c\neq K_d$. Conversely, any two distinct order-$p$ subgroups generate $G$ by Lagrange's theorem.
+
+Let $1\le k_1 < k_2 < \cdots < k_r \le q-1$ be the indices where $|H_{kp}|=p$, with stabilized prefixes $(c_i,A_i)$ ($|A_i|=k_i$). There must exist some index $i$ with $c_i\neq c_{i+1}$. By Lemma~\ref{lem:pq-branches}(4), $A_i + D(c_i,c_{i+1})\subseteq A_{i+1}$ with $|D(c_i,c_{i+1})|=p$. Since $A_{i+1}\subsetneq \F_q$, the Cauchy--Davenport theorem implies
+\[
+k_{i+1} = |A_{i+1}| \ge |A_i + D(c_i,c_{i+1})| \ge |A_i| + p - 1 = k_i + p - 1.
+\]
+Hence the gap $k_{i+1}-k_i$ skips at least $p-2$ eligible multiples of $p$, leaving at most $(q-1)-(p-2)=q-p+1$ stabilized proper boundaries. Thus
+\[
+Z_G(\mathbf{x}) \le pq - 1 + (p-1)(q-p+1).
+\]
+To attain this bound, pick distinct centers $c\neq d\in\F_q$ and a singleton $A_1=\{a\}\subset\F_q$. Put the $p$ elements of $(c,\{a\})$ first; next insert the $p(p-1)$ elements of $(d, a+D(c,d))\setminus (c,\{a\})$ in any order, producing a $K_d$-invariant prefix at size $p^2$ (layer-$0$ size $p$); finally append the remaining $q-p$ right cosets of $K_d$ one by one. This realizes $q-p+1$ stabilized proper boundaries and generates $\langle K_c,K_d\rangle = G$, proving~\eqref{eq:escape-val}.
+
+For $p=2$, $M(G)-\Mesc(G)=0$, so the optimal escaping orderings are precisely the order-$2$-branch maximizers that change center at least once---namely, the nonhierarchical maximizers of Theorem~\ref{thm:pq}(c).
+
+Now suppose $p\ge 3$ is odd, and let $\mathbf{x}$ achieve $\Mesc(G)$. Equality forces \emph{exact} attendance at all $q-p+1$ boundaries except a single gap of length $p-1$, with a single center change $c\neq d$ across that gap:
+\[
+(c,A) \subset (d,B),\qquad |A|=k,\qquad |B|=k+p-1,\qquad 1\le k\le q-p.
+\]
+Then $|A + D(c,d)| \le |B| = |A| + |D(c,d)| - 1 < q$, so equality holds in the Cauchy--Davenport theorem. Suppose for contradiction that $2\le k$ and $k+p-1\le q-2$. Then $|A|\ge 2$, $|D(c,d)|\ge 3$, and $|A+D(c,d)|\le q-2$. By Vosper's theorem~\cite{Vos56}, $D(c,d)$ must be an arithmetic progression in $\F_q$.
+
+However, since $p$ is odd, any $p$-term arithmetic progression in $\F_q$ contains its average $\mu = p^{-1}\sum_{x\in D(c,d)} x$. Computing directly from~\eqref{eq:layer-contain} and $\sum_{j=0}^{p-1}\alpha^{-j}=0$ (as $\alpha\neq 1$ has order $p$):
+\[
+\mu = \frac{1}{p}\sum_{j=0}^{p-1}(\alpha^{-j}-1)(c-d) = -(c-d).
+\]
+If $\mu\in D(c,d)$, then $(\alpha^{-j}-1)(c-d) = -(c-d)$ for some $j$, forcing $\alpha^{-j}=0$, impossible. Therefore $D(c,d)$ is \emph{not} an arithmetic progression, contradicting Vosper's theorem.
+
+Hence the center change must begin either at $k=1$ (moving from $|A|=1$ to $|B|=p$) or at $k=q-p$ (moving from $|A|=q-p$ to $|B|=q-1$). These two cases are disjoint (as $q-p\ge 2$ since $q>p\ge 3$ and $p\mid q-1$ implies $q\ge 2p+1$, so $q-p\ge p+1\ge 4$) and are in bijection via reversing the ordering $\mathbf{x}\mapsto (x_{pq},\ldots,x_1)$ (which preserves all stabilizers by Lemma~\ref{lem:reg} and maps $T_{jp}$ to $G\setminus T_{(q-j)p}$).
+
+We count the $k=1$ class directly:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item Choose the ordered pair of distinct centers $(c,d)$ in $q(q-1)$ ways.
+\item Choose the initial singleton $A=\{a\}\subset\F_q$ in $q$ ways. This uniquely determines the first coset $(c,\{a\})$ of size $p$, whose elements can be ordered in $p!$ ways.
+\item The forced next boundary is $(d,a+D(c,d))$ of layer-$0$ size $p$, uniquely determined by $(c,d,a)$. The $p(p-1)$ newly added elements in $(d,a+D(c,d))\setminus(c,\{a\})$ can be placed in any of $(p(p-1))!$ orders.
+\item The remaining $q-p$ right cosets of $K_d$ can be ordered in $(q-p)!$ ways, with $p!$ internal orderings inside each coset.
+\end{enumerate}
+Each choice yields a distinct labeled ordering whose proper-prefix stabilizers uniquely recover $(c,d,a)$ and every block. Multiplying by $2$ for the $k=q-p$ reversal class proves~\eqref{eq:escape-count}.
+\end{proof}
+
+\begin{example}
+For the smallest nonabelian odd-$p$ group $\F_7\rtimes C_3$ ($p=3,q=7$), Theorem~\ref{thm:escape} gives $\Mesc = 30$ (deficit $2$ below $M=32$) and
+\[
+A_{\mathrm{escape}}(\F_7\rtimes C_3) = 2\cdot 7^2\cdot 6\cdot 4!\cdot (3!)^5\cdot 6! = 79{,}009{,}136{,}640,
+\]
+matching an independent stabilized-subset dynamic program.
+\end{example}
+
+\section{Relation to prior work and open problems}
+\label{sec:prior}
+
+\subsection{Permutation connectivity and group factorizations}
+Label $G$ by $\mathbf{x}=(x_1,\ldots,x_m)$, and for each $g\in G$ let $\sigma_g\in S_m$ be the permutation defined by $x_{\sigma_g(i)}=gx_i$. Stanley's connectivity set~\cite{Sta05} is
+\[
+C(\sigma_g) = \bigl\{1\le j<m : \sigma_g(\{1,\ldots,j\}) = \{1,\ldots,j\}\bigr\}.
+\]
+Since $\sigma_g(\{1,\ldots,j\})=\{1,\ldots,j\}$ holds if and only if $g\in H_j$, a direct double count gives
+\[
+\sum_{g\in G} |C(\sigma_g)| = \sum_{j=1}^{m-1} |H_j| = \sum_{j=1}^{m-1}(|H_j|-1) + (m-1) = Z_G(\mathbf{x}).
+\]
+Thus $Z_G(\mathbf{x})$ measures the simultaneous reducibility of the entire left regular representation of $G$ under a single coordinate ordering, whereas~\cite{Sta05} and~\cite{Cal04} study connectivity and interval decompositions of individual permutations.
+
+Fixed-chain transversal factorizations of finite groups appear in~\cite{GVS03}, where the objective is minimizing the sum of block lengths for logarithmic signatures; as our $C_{12}$ witness shows, maximizing $Z_G$ permits independent subgroup branching across sibling cosets rather than one fixed subgroup chain. Recursive counting over maximal subgroups and rooted-tree wreath products appears in~\cite{ST09} (for maximal subgroup chains) and~\cite{MBKK18} (for phylogenetic tree automorphisms); here~\eqref{eq:count-rec} arises specifically from unique top-subgroup recovery~\eqref{eq:unique-top} of optimizing element orderings.
+
+\subsection{Comparison with Erd\H{o}s--Faigle--Kern}
+Because orbit--stabilizer relates $|\Stab_G(T)|$ to $|G|/|\Orb_G(T)|$, it is natural to compare our objective with the group-theoretic framework of Erd\H{o}s, Faigle, and Kern~\cite{EFK92}. Inspecting~\cite{EFK92} in full (Lemma~2.1, Theorem~2.1, Theorem~3.1, Lemma~4.1, Theorems~4.1--4.2, Proposition~5.1, Theorem~5.1, Theorem~6.1, and Corollary~6.1) confirms that~\cite{EFK92} addresses a different problem: it fixes a single chain $A_0\subset\cdots\subset A_m$ under a permutation group $G$ and averages over coset representatives to derive Bollob\'as-, LYM-, and Erd\H{o}s--Ko--Rado-type inequalities for intersecting Sperner families in vector-space lattices, chain-transitive posets, and generalized Boolean algebras. It does not optimize $\sum_j (|\Stab_G(T_j)|-1)$ over group orderings or classify recursive coset maximizers.
+
+\subsection{Open problems}
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \emph{All finite solvable groups:} Does $M(G)=|G|W(|G|)$ hold for every finite solvable group $G$, or does some solvable group exceed the lower bound of Proposition~\ref{prop:solvable}?
+\item \emph{Nonsolvable groups:} What is $M(A_5)$? Because $A_5$ has no normal prime-index subgroup, Proposition~\ref{prop:solvable} does not apply, and $M(A_5)$ may fall strictly below $60\,W(60)$.
+\item \emph{Mixed-order nilpotent groups:} Theorem~\ref{thm:main} covers every $p$-group and every quasihamiltonian group (which is nilpotent), but a direct product of a non-quasihamiltonian $p$-group with a coprime cyclic group (such as $D_8\times C_3$) lies outside both hypotheses. Does Theorem~\ref{thm:main} extend to all finite nilpotent groups?
+\item \emph{Closed-form asymptotics for dihedral maximizers:} Determine the asymptotic growth of the nonhierarchical count $2^q\sum_{|A|=q-1}f(A) - q\cdot q!\cdot 2^q$ in Theorem~\ref{thm:pq}(c) as $q\to\infty$.
+\end{enumerate}
+
+\section*{Data and code availability}
+A standalone Python verification script (standard library only) reproducing all small-group maxima, labeled counts, the $C_{12}$ witness, the full $S_3$ enumeration, the nonabelian order-$pq$ table, and the Vosper escape count for $\F_7\rtimes C_3$ (\texttt{verify\_prefix\_stabilizers.py}) is publicly available at \url{https://github.com/AgentSlop-Si/prefix-stabilizers}.
+
+\bibliographystyle{amsplain}
+\bibliography{references}
+
+\end{document}
