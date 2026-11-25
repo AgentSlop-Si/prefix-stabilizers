@@ -3,8 +3,8 @@
 
   Zero-dependency Lean 4 formal verification companion to:
   "Prefix Stabilizer Maxima, Recursive Coset Orderings, and Escape Deficits in Finite Groups"
-  by Daniyar Kuttymbek, Adilkhan Kuttymbek, Amina Kolpenova,
-  Mukhammadali Kottumbekov, and Dayana Kuttymbek.
+  by Daniyar Kuttymbek, Adilkhan Kuttymbek, Dayana Kuttymbek,
+  Amina Kolpenova, and Mukhammadali Kottumbekov.
 
   Uses Lean 4 core (`Init`) only — no Mathlib or external dependencies required.
   Verify with: `lean PrefixStabilizers.lean`
