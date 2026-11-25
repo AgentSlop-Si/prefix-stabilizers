@@ -32,17 +32,25 @@
 
 \title[Prefix Stabilizer Maxima in Finite Groups]{Prefix Stabilizer Maxima, Recursive Coset Orderings,\\and Escape Deficits in Finite Groups}
 
-\author{Daniyar Kuttymbek}
+\author[D. Kuttymbek]{Daniyar Kuttymbek}
 \address{Astana, Kazakhstan}
 \email{daniyar.kuttymbek@gmail.com}
 
-\author{Adilkhan Kuttymbek}
+\author[A. Kuttymbek]{Adilkhan Kuttymbek}
 \address{Astana, Kazakhstan}
 \email{adilkhan.kuttymbek@gmail.com}
 
-\author{Amina Kolpenova}
+\author[A. Kolpenova]{Amina Kolpenova}
 \address{Astana, Kazakhstan}
 \email{aminakolpenova@gmail.com}
+
+\author[M. Kottumbekov]{Mukhammadali Kottumbekov}
+\address{Astana, Kazakhstan}
+\email{mukhammadalikottumbek@gmail.com}
+
+\author[D. Kuttymbek]{Dayana Kuttymbek}
+\address{Astana, Kazakhstan}
+\email{dayanamiu74@gmail.com}
 
 \date{\today}
 \subjclass[2020]{Primary 05E16, 20D60; Secondary 05A05, 11B30, 20D15}
@@ -540,6 +548,7 @@ Each choice yields a distinct labeled ordering whose proper-prefix stabilizers u
 \end{proof}
 
 \begin{example}
+\label{ex:f7c3}
 For the smallest nonabelian odd-$p$ group $\F_7\rtimes C_3$ ($p=3,q=7$), Theorem~\ref{thm:escape} gives $\Mesc = 30$ (deficit $2$ below $M=32$) and
 \[
 A_{\mathrm{escape}}(\F_7\rtimes C_3) = 2\cdot 7^2\cdot 6\cdot 4!\cdot (3!)^5\cdot 6! = 79{,}009{,}136{,}640,
@@ -575,7 +584,11 @@ Because orbit--stabilizer relates $|\Stab_G(T)|$ to $|G|/|\Orb_G(T)|$, it is nat
 \end{enumerate}
 
 \section*{Data and code availability}
-A standalone Python verification script (standard library only) reproducing all small-group maxima, labeled counts, the $C_{12}$ witness, the full $S_3$ enumeration, the nonabelian order-$pq$ table, and the Vosper escape count for $\F_7\rtimes C_3$ (\texttt{verify\_prefix\_stabilizers.py}) is publicly available at \url{https://github.com/AgentSlop-Si/prefix-stabilizers}.
+All verification artifacts are publicly available at \url{https://github.com/AgentSlop-Si/prefix-stabilizers}:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item A standalone Python verification script (\texttt{verify\_prefix\_stabilizers.py}, standard library only) reproducing all small-group maxima, labeled counts, the $C_{12}$ witness, the full $S_3$ enumeration, Table~\ref{tab:pq-counts}, and the stabilized-subset dynamic program for Example~\ref{ex:f7c3}.
+\item A zero-dependency Lean~4 formal verification file (\texttt{PrefixStabilizers.lean}, verified in Lean~4.36.0 using core \texttt{Init} only, with no \texttt{sorry} and pure kernel reduction) machine-checking the abstract group-theoretic results of Lemma~\ref{lem:reg}, Lemma~\ref{lem:local} (local stabilizer inclusion), Lemma~\ref{lem:block-score} (normal partial-block localization), Lemma~\ref{lem:accum}, and Theorem~\ref{thm:main}(c); the symbolic $p$-group GCD sum identity of Theorem~\ref{thm:pgroup} for all primes $p$ and $a\ge 1$; the Stanley connectivity double count of Section~\ref{sec:prior}; the escape-deficit identity of Theorem~\ref{thm:escape}; and the exact finite counts for $C_1$--$C_4$, $C_2\times C_2$, $C_6$, $C_8$, $Q_8$, $D_8$, $C_{12}$, all $720$ permutations of $S_3$, Table~\ref{tab:pq-counts}, and Example~\ref{ex:f7c3}.
+\end{enumerate}
 
 \bibliographystyle{amsplain}
 \bibliography{references}
