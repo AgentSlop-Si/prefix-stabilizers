@@ -9,7 +9,8 @@
 \usepackage[margin=1.05in]{geometry}
 \usepackage{microtype}
 \usepackage{xcolor}
-\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[colorlinks=true,breaklinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
 
 \numberwithin{equation}{section}
 
@@ -584,7 +585,11 @@ Because orbit--stabilizer relates $|\Stab_G(T)|$ to $|G|/|\Orb_G(T)|$, it is nat
 \end{enumerate}
 
 \section*{Data and code availability}
-All verification artifacts are publicly available at \url{https://github.com/AgentSlop-Si/prefix-stabilizers}:
+All verification artifacts are publicly available at
+\begin{center}
+\url{https://github.com/AgentSlop-Si/prefix-stabilizers}
+\end{center}
+and consist of:
 \begin{enumerate}[label=(\arabic*),leftmargin=2em]
 \item A standalone Python verification script (\texttt{verify\_prefix\_stabilizers.py}, standard library only) reproducing all small-group maxima, labeled counts, the $C_{12}$ witness, the full $S_3$ enumeration, Table~\ref{tab:pq-counts}, and the stabilized-subset dynamic program for Example~\ref{ex:f7c3}.
 \item A zero-dependency Lean~4 formal verification file (\texttt{PrefixStabilizers.lean}, verified in Lean~4.36.0 using core \texttt{Init} only, with no \texttt{sorry} and pure kernel reduction) machine-checking the abstract group-theoretic results of Lemma~\ref{lem:reg}, Lemma~\ref{lem:local} (local stabilizer inclusion), Lemma~\ref{lem:block-score} (normal partial-block localization), Lemma~\ref{lem:accum}, and Theorem~\ref{thm:main}(c); the symbolic $p$-group GCD sum identity of Theorem~\ref{thm:pgroup} for all primes $p$ and $a\ge 1$; the Stanley connectivity double count of Section~\ref{sec:prior}; the escape-deficit identity of Theorem~\ref{thm:escape}; and the exact finite counts for $C_1$--$C_4$, $C_2\times C_2$, $C_6$, $C_8$, $Q_8$, $D_8$, $C_{12}$, all $720$ permutations of $S_3$, Table~\ref{tab:pq-counts}, and Example~\ref{ex:f7c3}.
